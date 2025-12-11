@@ -243,7 +243,6 @@ namespace LearnCraftt.Persistence.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("ProfileImage")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedDate")
