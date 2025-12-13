@@ -4,6 +4,7 @@ using LearnCraftt.Application.Repositories.AIFormatRepositories;
 using LearnCraftt.Application.Repositories.AIGeneratedContentRepositories;
 using LearnCraftt.Application.Repositories.AIQuestionRepositories;
 using LearnCraftt.Application.Repositories.ExamRepositories;
+using LearnCraftt.Application.Repositories.PasswordResetTokenRepositories;
 using LearnCraftt.Application.Repositories.UploadedContentRepositories;
 using LearnCraftt.Application.Repositories.UserAnswerRepositories;
 using LearnCraftt.Application.Repositories.UserRepositories;
@@ -15,6 +16,7 @@ using LearnCraftt.Persistence.Repositories.AIFormatRepositories;
 using LearnCraftt.Persistence.Repositories.AIGeneratedContentRepositories;
 using LearnCraftt.Persistence.Repositories.AIQuestionRepositories;
 using LearnCraftt.Persistence.Repositories.ExamRepositories;
+using LearnCraftt.Persistence.Repositories.PasswordResetTokensRepositories;
 using LearnCraftt.Persistence.Repositories.UploadedContentRepositories;
 using LearnCraftt.Persistence.Repositories.UserAnswerRepositories;
 using LearnCraftt.Persistence.Repositories.UserRepositories;
@@ -82,6 +84,9 @@ namespace LearnCraftt.Persistence
         services.AddDbContext<LearnCrafttDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
         
+        services.AddScoped<IPasswordResetTokenReadRepository, PasswordResetTokenReadRepository>();
+        services.AddScoped<IPasswordResetTokenWriteRepository, PasswordResetTokenWriteRepository>();
+
             services.AddDbContext<LearnCrafttDbContext>(options =>
                 options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 

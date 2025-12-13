@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using LearnCraftt.Application.Dto.User;
 using LearnCraftt.Application.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -42,5 +43,16 @@ public class UserController(UserService userService) : ControllerBase
     {
         var result =  await userService.GetAllUsers();
         return Ok(result);
+    }
+
+    [HttpGet("me")]
+    public async Task<IActionResult> GetMe()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+        
+        var result = await userService.GetMyProfileAsync(Guid.Parse(userId));
+        if(!result.Success) return BadRequest(result.Message);
+        return Ok(result.Data);
     }
 }

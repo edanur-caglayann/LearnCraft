@@ -129,5 +129,21 @@ public class UserService(
         }).ToList();
         return ServiceResult<List<UserListResponseDto>>.SuccessResult(userList);
     }
+
+    public async Task<ServiceResult<UserProfileDto>> GetMyProfileAsync(Guid userId)
+    {
+        var existingUser = await userRead.GetSingleAsync(x => x.Id == userId);
+        if (existingUser == null)
+            return ServiceResult<UserProfileDto>.FailResult("User could not be found.");
+
+        var userProfileDto = new UserProfileDto
+        {
+            Id = existingUser.Id,
+            UserName = existingUser.UserName,
+            UserSurname = existingUser.UserSurname,
+            Email = existingUser.Email,
+        };
+        return ServiceResult<UserProfileDto>.SuccessResult(userProfileDto);
+    }
      }
      
