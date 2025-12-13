@@ -1,5 +1,7 @@
 using LearnCraftt.Domain.Entities;
+using LearnCraftt.Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 
 namespace LearnCraftt.Persistence
@@ -20,5 +22,20 @@ namespace LearnCraftt.Persistence
         public DbSet<UploadedContent> UploadedContents { get; set; }
         public DbSet<UserScore> UserScores { get; set; }
         public DbSet<UserAnswer> UserAnswers { get; set; }
+        public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
+        
+        public override int SaveChanges()
+        {
+            foreach (var entry in ChangeTracker.Entries<BaseEntity>())
+            {
+                if (entry.State == EntityState.Added)
+                    entry.Entity.CreatedDate = DateTime.Now;
+                
+                else if (entry.State == EntityState.Modified)
+                    entry.Entity.UpdatedDate = DateTime.UtcNow;
+            }
+            return base.SaveChanges();
+        }
     }
+    
 }
