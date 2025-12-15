@@ -21,6 +21,7 @@
     
 
     <ItemGroup>
+      <ProjectReference Include="..\LearnCraftt.Application\LearnCraftt.Application.csproj" />
       <ProjectReference Include="..\LearnCraftt.Domain\LearnCraftt.Domain.csproj" />
     </ItemGroup>
 
