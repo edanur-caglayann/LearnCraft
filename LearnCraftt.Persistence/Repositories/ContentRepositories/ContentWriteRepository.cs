@@ -3,10 +3,9 @@ using LearnCraftt.Domain.Entities;
 
 namespace LearnCraftt.Persistence.Repositories.UploadedContentRepositories;
 
-public class UploadedContentReadRepository: ReadRepository<UploadedContent>, IUploadedContentReadRepository
+public class ContentWriteRepository: WriteRepository<Content>, IContentWriteRepository
 {
-    public UploadedContentReadRepository(LearnCrafttDbContext context) : base(context)
+    public ContentWriteRepository(LearnCrafttDbContext context) : base(context)
     {
     }
-    
 }

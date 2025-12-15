@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using LearnCraftt.Application.Dto.User;
 using LearnCraftt.Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LearnCraftt.Api.Controller;
@@ -9,7 +10,7 @@ namespace LearnCraftt.Api.Controller;
 [Route("api/[controller]")]
 public class UserController(UserService userService) : ControllerBase
 {
-    
+    [Authorize(Roles = "Admin")]
     [HttpPost("create")]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserDto createUserDto)
     { 
@@ -17,6 +18,7 @@ public class UserController(UserService userService) : ControllerBase
         return Ok(result);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPut("update")]
     public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDto updateUserDto, string userId)
     {
@@ -24,13 +26,15 @@ public class UserController(UserService userService) : ControllerBase
         return Ok(result);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{userId}")]
     public async Task<IActionResult> DeleteUser(string userId)
     {
         var result = await userService.DeleteUser(userId);
         return Ok(result);
     }
-
+    
+    [Authorize(Roles = "Admin")]
     [HttpGet("{userId}")]
     public async Task<IActionResult> GetUserById(string userId)
     {
@@ -38,6 +42,7 @@ public class UserController(UserService userService) : ControllerBase
             return Ok(result);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpGet]
     public async Task<IActionResult> GetAllUsers()
     {
@@ -45,6 +50,7 @@ public class UserController(UserService userService) : ControllerBase
         return Ok(result);
     }
 
+    [Authorize]
     [HttpGet("me")]
     public async Task<IActionResult> GetMe()
     {

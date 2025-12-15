@@ -54,16 +54,7 @@ public class UserService(
             if (emailCheck != null)
                 return ServiceResult<string>.FailResult("Email is already in use by another user.");
         }
-
-        //sifresi dogru mu
-        /* PasswordHasher şu işlemi yapar:
-           Kullanıcının girdiği şifreyi hashler
-           DB’deki hash ile karşılaştırır
-           Sonuç olarak enum döner:
-           1-Success
-           2-Failed
-           3-SuccessRehashNeeded
-         */
+        
         var passwordCheck = passwordHasher.VerifyHashedPassword(existingUser, existingUser.PasswordHash, updateUserDto.CurrentPassword);
         if (passwordCheck == PasswordVerificationResult.Failed) //Eğer kullanıcı girdiği şifre mevcut şifre ile eşleşmiyorsa
             return ServiceResult<string>.FailResult("Password is incorrect.");

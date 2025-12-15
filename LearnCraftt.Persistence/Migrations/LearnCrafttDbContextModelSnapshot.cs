@@ -148,6 +148,83 @@ namespace LearnCraftt.Persistence.Migrations
                     b.ToTable("AIQuestions");
                 });
 
+            modelBuilder.Entity("LearnCraftt.Domain.Entities.Content", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("ContentType")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<JsonDocument>("Format")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.Property<bool>("IsAnalyzed")
+                        .HasColumnType("boolean");
+
+                    b.Property<long>("Size")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UploadedContents");
+                });
+
+            modelBuilder.Entity("LearnCraftt.Domain.Entities.EmailConfirmationToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("ExpireAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EmailConfirmationTokens");
+                });
+
             modelBuilder.Entity("LearnCraftt.Domain.Entities.Exam", b =>
                 {
                     b.Property<Guid>("Id")
@@ -220,41 +297,6 @@ namespace LearnCraftt.Persistence.Migrations
                     b.ToTable("PasswordResetTokens");
                 });
 
-            modelBuilder.Entity("LearnCraftt.Domain.Entities.UploadedContent", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ContentType")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<JsonDocument>("Format")
-                        .IsRequired()
-                        .HasColumnType("jsonb");
-
-                    b.Property<long>("Size")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("UploadedContents");
-                });
-
             modelBuilder.Entity("LearnCraftt.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -277,6 +319,9 @@ namespace LearnCraftt.Persistence.Migrations
 
                     b.Property<string>("ProfileImage")
                         .HasColumnType("text");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("timestamp with time zone");
@@ -354,6 +399,17 @@ namespace LearnCraftt.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UserScores");
+                });
+
+            modelBuilder.Entity("LearnCraftt.Domain.Entities.Content", b =>
+                {
+                    b.HasOne("LearnCraftt.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }
