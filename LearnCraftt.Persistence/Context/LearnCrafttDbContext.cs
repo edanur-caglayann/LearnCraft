@@ -19,7 +19,7 @@ namespace LearnCraftt.Persistence
         public DbSet<Exam> Exams { get; set; }
         public DbSet<AIQuestion> AIQuestions { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<Content> UploadedContents { get; set; }
+        public DbSet<Content> Contents { get; set; }
         public DbSet<UserScore> UserScores { get; set; }
         public DbSet<UserAnswer> UserAnswers { get; set; }
         public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }

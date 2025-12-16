@@ -155,7 +155,6 @@ namespace LearnCraftt.Persistence.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Category")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("ContentType")
@@ -165,7 +164,6 @@ namespace LearnCraftt.Persistence.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<JsonDocument>("Format")
-                        .IsRequired()
                         .HasColumnType("jsonb");
 
                     b.Property<bool>("IsAnalyzed")
@@ -192,7 +190,7 @@ namespace LearnCraftt.Persistence.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UploadedContents");
+                    b.ToTable("Contents");
                 });
 
             modelBuilder.Entity("LearnCraftt.Domain.Entities.EmailConfirmationToken", b =>

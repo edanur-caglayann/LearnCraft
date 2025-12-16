@@ -11,6 +11,7 @@ using LearnCraftt.Application.Repositories.UserRepositories;
 using LearnCraftt.Application.Repositories.UserScoreRepositories;
 using LearnCraftt.Application.Services;
 using LearnCraftt.Application.Services.Authentication;
+using LearnCraftt.Application.Services.Contents;
 using LearnCraftt.Persistence.Repositories.AIAnswerRepositories;
 using LearnCraftt.Persistence.Repositories.AIFormatRepositories;
 using LearnCraftt.Persistence.Repositories.AIGeneratedContentRepositories;
@@ -94,6 +95,8 @@ namespace LearnCraftt.Persistence
             //EmailConfirmationToken
             services.AddScoped<IEmailConfirmationTokenWriteRepository, EmailConfirmationTokenWriteRepository>();
             services.AddScoped<IEmailConfirmationTokenReadRepository, EmailConfirmationTokenReadRepository>();
+            
+            services.AddScoped<IContentService, ContentService>();
 
             services.AddDbContext<LearnCrafttDbContext>(options =>
                 options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));

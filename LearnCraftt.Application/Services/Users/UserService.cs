@@ -44,10 +44,8 @@ public class UserService(
         // mevcut kullaniciyi bul. Ayni mail baska kullanicida var mi kontrolu yap
         var existingUser = await userRead.GetSingleAsync(x => x.Id == Guid.Parse((userId)));
         if (existingUser == null)
-        {
             return ServiceResult<string>.FailResult("User could not be found.");
-        }
-
+        
         if (existingUser.Email != updateUserDto.Email)
         {
             var emailCheck = await userRead.GetSingleAsync(x => x.Email == updateUserDto.Email);
