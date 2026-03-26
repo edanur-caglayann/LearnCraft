@@ -50,4 +50,5 @@ public class ContentController(IContentService contentService) : ControllerBase
         var result = await contentService.GetAllContents(userId);
         return Ok(result);
     }
+    
 }

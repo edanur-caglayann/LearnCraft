@@ -10,7 +10,7 @@ namespace LearnCraftt.Api.Controller;
 [Route("api/[controller]")]
 public class UserController(UserService userService) : ControllerBase
 {
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     [HttpPost("create")]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserDto createUserDto)
     { 

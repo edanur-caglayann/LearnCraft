@@ -14,4 +14,6 @@ public interface IContentService
     
     Task<ServiceResult<ContentResponseDto>> GetContentById(Guid contentId, Guid userId);
     Task<ServiceResult<List<ContentResponseDto>>>GetAllContents(Guid userId);
+    
+
 }

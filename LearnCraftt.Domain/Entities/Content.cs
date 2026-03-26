@@ -14,7 +14,13 @@ public class Content : BaseEntity
     public JsonDocument? Format { get; set; }
     public int ContentType { get; set; }
     public long Size { get; set; }
-    public bool IsAnalyzed { get; set; }
+    
+    
+    public bool IsAnalyzed { get; set; } 
+    public DateTime? AnalyzedAt { get; set; }
+    public string? Summary { get; set; } // icerigin kisa ozeti(ai uretecek)
+    public List <string> Tags { get; set; } // anahtar kelimler / etiketler
+
    
     public User User { get; set; } = null!;
    

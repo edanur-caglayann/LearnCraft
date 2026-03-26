@@ -1,5 +1,7 @@
 using System.Text;
 using LearnCraftt.Application;
+using LearnCraftt.Application.Common.Options;
+using LearnCraftt.Application.Services.Contents;
 using LearnCraftt.Domain.Entities;
 using LearnCraftt.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -13,7 +15,10 @@ builder.Services.AddControllers();
 // DI → Persistence servisleri + DbContext
 builder.Services.AddPersistenceServices(builder.Configuration);
 builder.Services.AddApplicationServices();
+builder.Services.Configure<GeminiOptions>(builder.Configuration.GetSection("Gemini"));
+builder.Services.AddHttpClient();
 
+builder.Services.AddScoped<IContentService, ContentService>();
 
 //ASP.NET Core new'leyerek otomatik veriyor. Bunu DI container’a ekleriz
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
@@ -21,11 +26,13 @@ builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 // tarayici farkli bir originden (http://localhost:5066) istek yapıyorsa, CORS header’ları gerekir.
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
-        policy => policy
-            .AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader());
+    options.AddPolicy("GenkitCors", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
 });
 builder.Services.AddSwaggerGen(c =>
 {
@@ -96,7 +103,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
-app.UseCors("AllowAll");
+app.UseCors("GenkitCors");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

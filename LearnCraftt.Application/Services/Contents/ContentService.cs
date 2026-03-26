@@ -1,10 +1,13 @@
 using System.Net.Mime;
+using System.Security.Cryptography;
 using LearnCraftt.Application.Common;
 using LearnCraftt.Application.Dto.Content;
 using LearnCraftt.Application.Repositories.UploadedContentRepositories;
 using LearnCraftt.Application.Repositories.UserRepositories;
+using LearnCraftt.Application.Services.Analysis;
 using LearnCraftt.Domain.Entities;
 using LearnCraftt.Domain.Enums;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 
 namespace LearnCraftt.Application.Services.Contents;
@@ -12,8 +15,10 @@ namespace LearnCraftt.Application.Services.Contents;
 public class ContentService(
     IContentReadRepository contentRead,
     IContentWriteRepository contentWrite,
-    IUserReadRepository userRead) : IContentService
+    IUserReadRepository userRead,
+    IContentAnalysisService contentAnalysisService) : IContentService
 {
+    //Kullanıcının gönderdiği içeriği doğrula → kaydet → AI ile analiz et → sonucu DB’ye yaz
     public async Task<ServiceResult<Guid>> CreateAsync(CreateContentRequestDto createContent, Guid userId)
     {
         // icerik olusturan kullanici db' de var mi (token'da gelen ile karislasitir)
@@ -33,7 +38,7 @@ public class ContentService(
         if (string.IsNullOrWhiteSpace(title)) // trim sonrasi tekrar "" bos kalmis olabilri diye kontrol
             return ServiceResult<Guid>.FailResult("Title is required..");
 
-        // text xorunlu ve anlamli olmali
+        // text xorunlu ve anlamli olmali 
         var text = createContent.Text?.Trim();
         if (string.IsNullOrWhiteSpace(text))
             return ServiceResult<Guid>.FailResult("Content text is required.");
@@ -77,9 +82,37 @@ public class ContentService(
             Size = createContent.Size,
             IsAnalyzed = false,
         };
-
+        
         await contentWrite.AddAsync(content);
         await contentWrite.SaveAsync();
+
+        try
+        {
+            var aiResult =
+                await contentAnalysisService.GenerateAnalyzeAsync(content.Text);
+
+            content.Summary = aiResult.Summary;
+
+            content.Tags = aiResult.Tags != null && aiResult.Tags.Any()
+                ? aiResult.Tags
+                : new List<string> { "General" };
+
+            content.IsAnalyzed = true;
+
+            await contentWrite.UpdateAsync(content);
+            await contentWrite.SaveAsync();
+
+        }
+        catch (Exception)
+        {
+            content.IsAnalyzed = false;
+            content.Summary = null;
+            content.Tags = null;
+
+            await contentWrite.UpdateAsync(content);
+            await contentWrite.SaveAsync();
+        }
+        
 
         return ServiceResult<Guid>.SuccessResult(content.Id);
     }
@@ -156,6 +189,63 @@ public class ContentService(
         }).ToList();
         
         return ServiceResult<List<ContentResponseDto>>.SuccessResult(contentList);
-
     }
-}
+
+ 
+    /*
+    public async Task<ServiceResult<AnalyzeContentResponseDto>> AnalyzeContent(Guid contentId, Guid userId)
+    {
+        var existingContent = await contentRead.GetSingleAsync(x => x.Id == contentId);
+        if(existingContent == null)
+            return ServiceResult<AnalyzeContentResponseDto>.FailResult("Content could not be found.");
+        
+        if(existingContent.UserId != userId)
+            return ServiceResult<AnalyzeContentResponseDto>.FailResult("You are not allowed to view this content.");
+        
+        //daha once analiz edilmis mi
+        if(existingContent.IsAnalyzed)
+            return ServiceResult<AnalyzeContentResponseDto>.FailResult("Content is already analyzed.");
+        
+        var summary = await contentAnalysisService.GenerateAnalyze(existingContent.Text);
+        
+        // ai'dan donen sonucu yazar
+        existingContent.Summary = summary.Summary;
+        existingContent.Tags = summary.Tags;
+
+        existingContent.IsAnalyzed = true;
+        existingContent.AnalyzedAt = DateTime.UtcNow;
+        
+        await contentWrite.UpdateAsync(existingContent);
+        await contentWrite.SaveAsync();
+        var response = new AnalyzeContentResponseDto
+        {
+            ContentId = existingContent.Id,
+            Summary = existingContent.Summary,
+            Tags = existingContent.Tags,
+            AnalyzedAt = existingContent.AnalyzedAt!.Value
+        };
+        
+        return ServiceResult<AnalyzeContentResponseDto>.SuccessResult(response);
+    }
+    */
+     }
+    
+    /*
+     * 1️⃣ Gerçek OpenAI API çağrısı
+       
+       prompt yazımı
+       
+       HttpClient
+       
+       token handling
+       
+       2️⃣ Analyze sonrası otomatik soru üretimi
+       
+       GenerateQuestions()
+       
+       Exam entity
+       
+       3️⃣ Analyze işlemini background job yapma
+       
+       “Analyze queued” yaklaşımı
+     */
